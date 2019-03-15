@@ -18,12 +18,13 @@ namespace ConcentrationLibrary
         List<Player> Players { [OperationContract]get; [OperationContract]set; }
         int CurrentPlayer { [OperationContract]get; [OperationContract]set; }
         int CardsFlipped { [OperationContract]get; [OperationContract]set; }
-        Difficulty GameDifficulty { [OperationContract]get; [OperationContract]set; }
-
         string FirstBtnXaml { [OperationContract]get; [OperationContract]set; }
         string SecondBtnXaml { [OperationContract]get; [OperationContract]set; }
         Card FirstCard { [OperationContract]get; [OperationContract]set; }
         Card SecondCard { [OperationContract]get; [OperationContract]set; }
+        Deck GameDeck { [OperationContract]get; [OperationContract]set; }
+
+        Difficulty GameDifficulty { [OperationContract]get; [OperationContract]set; }
     }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
@@ -38,6 +39,7 @@ namespace ConcentrationLibrary
         public int CardsFlipped { get; set; }
         public Card FirstCard { get; set; }
         public Card SecondCard { get; set; }
+        public Deck GameDeck { get; set; }
 
         private int _CurrentPlayer;
         public int CurrentPlayer {
@@ -48,10 +50,6 @@ namespace ConcentrationLibrary
                 else
                     _CurrentPlayer = value;
             }
-        }
-
-        public Player GetCurrentPlayer() {
-            return Players.Find(p => p.PlayerID == _CurrentPlayer);
         }
 
         public Concentration() {
@@ -75,5 +73,7 @@ namespace ConcentrationLibrary
                 if (p.PlayerID == _CurrentPlayer)
                     p.Points++;
         }
+
+        public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == _CurrentPlayer);
     }
 }

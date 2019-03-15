@@ -17,8 +17,9 @@ namespace ConcentrationClient
     {
         BackgroundWorker worker;
         IConcentration game;
-        Grid gameGrid;
         ObservableCollection<Player> players;
+
+        Grid gameGrid;
         Deck deck;
 
         public static readonly DependencyProperty CurrentPlayerProperty = DependencyProperty.Register("CurrentPlayer", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
@@ -157,11 +158,6 @@ namespace ConcentrationClient
                     pbText.Text = "Remember the cards...";
                     pbRememberCardsTimer.Foreground = Brushes.IndianRed;
                     worker.RunWorkerAsync();
-
-                    // Change player turn on no point
-                    game.CurrentPlayer++;
-                    CurrentPlayer = game.CurrentPlayer;
-                    lbPlayers.SelectedIndex = CurrentPlayer - 1;
                 }
             }
         }
@@ -174,21 +170,15 @@ namespace ConcentrationClient
 
         private Button GetButtonFromXaml(string xaml) => XamlReader.Parse(xaml) as Button;
 
-        private void FindButtonChangeVisibility(Button btn, bool hidden = false)
-        {
-            if (hidden) {
-                foreach (UIElement b in gameGrid.Children)
-                    if(b.GetType() == typeof(Button))
-                        if (((Button)b).Tag != null)
-                            if (((Button)b).Tag.ToString() == btn.Tag.ToString())
+        private void FindButtonChangeVisibility(Button btn, bool hidden = false) {
+            foreach (UIElement b in gameGrid.Children)
+                if (b.GetType() == typeof(Button))
+                    if (((Button)b).Tag != null)
+                        if (((Button)b).Tag.ToString() == btn.Tag.ToString())
+                            if(hidden)
                                 b.Visibility = Visibility.Hidden;
-            } else {
-                foreach (UIElement b in gameGrid.Children)
-                    if (b.GetType() == typeof(Button))
-                        if (((Button)b).Tag != null)
-                            if (((Button)b).Tag.ToString() == btn.Tag.ToString())
+                            else
                                 b.Visibility = Visibility.Visible;
-            }
         }
 
         /*---------------
@@ -209,11 +199,11 @@ namespace ConcentrationClient
             FindButtonChangeVisibility(GetButtonFromXaml(game.FirstBtnXaml));
             FindButtonChangeVisibility(GetButtonFromXaml(game.SecondBtnXaml));
             game.CardsFlipped = 0;
-        }
 
-        private void Window_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            MessageBox.Show(this.Width.ToString() + "," + this.Height.ToString());
+            // Change player turn
+            game.CurrentPlayer++;
+            CurrentPlayer = game.CurrentPlayer;
+            lbPlayers.SelectedIndex = CurrentPlayer - 1;
         }
     }
 }

@@ -1,0 +1,47 @@
+﻿<Window x:Class="ConcentrationClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConcentrationClient"
+        mc:Ignorable="d"
+        Title="Concentration - The Game" Height="500" Width="1300">
+
+    <Window.Resources>
+        <ResourceDictionary Source="Styles.xaml"/>
+    </Window.Resources>
+
+    <Grid x:Name="mainGrid" Margin="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Stats Panel -->
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+
+            <WrapPanel HorizontalAlignment="Center">
+                <Label Content="Current Player: " />
+                <Label x:Name="lblPlayer" Content="{Binding CurrentPlayer}"/>
+            </WrapPanel>
+
+            <GroupBox Header="Scoreboard" Margin="5,0">
+                <ListBox x:Name="lbPlayers" Margin="0,5" HorizontalAlignment="Center" />
+            </GroupBox>
+
+            <WrapPanel HorizontalAlignment="Center">
+                <Button x:Name="btnStart" Content="Start Game" Margin="5" Padding="2" Click="StartGame"/>
+                <Button x:Name="btnEnd" Content="End Game" Margin="5" Padding="2" IsEnabled="False" Click="EndGame"/>
+            </WrapPanel>
+
+            <Grid Margin="5">
+                <ProgressBar Height="25" Maximum="100" Name="pbRememberCardsTimer" Foreground="IndianRed"/>
+                <TextBlock Text="" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="pbText"/>
+            </Grid>
+
+        </StackPanel>
+
+
+
+    </Grid>
+</Window>

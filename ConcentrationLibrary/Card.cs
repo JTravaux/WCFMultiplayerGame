@@ -22,7 +22,7 @@ namespace ConcentrationLibrary
 
         public override string ToString() => Rank.ToString() + "\n" + Suit.ToString() + "\n" + Color.ToString();
 
-        public string GetCharRank() {
+        public string GetRankString() {
             switch (Rank) {
                 case RankID.Ace:
                     return "A";

@@ -5,11 +5,11 @@ using System.Windows.Controls;
 using System.ServiceModel;
 using System.Runtime.Serialization;
 using static ConcentrationLibrary.Concentration;
+using System.Windows.Markup;
 
 namespace ConcentrationLibrary
 {
     [ServiceContract]
-    [ServiceKnownType(typeof(UIElement))]
     public interface IConcentration {
         [OperationContract] Player GetCurrentPlayer();
         [OperationContract] void ResetGame();
@@ -20,10 +20,10 @@ namespace ConcentrationLibrary
         int CardsFlipped { [OperationContract]get; [OperationContract]set; }
         string FirstBtnXaml { [OperationContract]get; [OperationContract]set; }
         string SecondBtnXaml { [OperationContract]get; [OperationContract]set; }
+        string GameGridXaml { [OperationContract]get; [OperationContract]set; }
         Card FirstCard { [OperationContract]get; [OperationContract]set; }
         Card SecondCard { [OperationContract]get; [OperationContract]set; }
         Deck GameDeck { [OperationContract]get; [OperationContract]set; }
-
         Difficulty GameDifficulty { [OperationContract]get; [OperationContract]set; }
     }
 
@@ -36,6 +36,7 @@ namespace ConcentrationLibrary
 
         public string FirstBtnXaml { get; set; }
         public string SecondBtnXaml { get; set; }
+        public string GameGridXaml { get; set; }
         public int CardsFlipped { get; set; }
         public Card FirstCard { get; set; }
         public Card SecondCard { get; set; }
@@ -59,6 +60,45 @@ namespace ConcentrationLibrary
 
             for (int i = 1; i <= 2; i++)
                 Players.Add(new Player(i));
+
+            Grid gameGrid = new Grid() { IsEnabled = false };
+
+            for (int j = 0; j < 4; j++)
+                gameGrid.RowDefinitions.Add(new RowDefinition());
+
+            for (int j = 0; j < 13; j++)
+                gameGrid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            if (GameDeck == null)
+                GameDeck = new Deck();
+            else
+                GameDeck.Repopulate();
+
+            for (int i = 0; i < 13; ++i)
+                for (int j = 0; j < 4; ++j)
+                {
+                    // Draw a new card from the deck
+                    Card c = GameDeck.Draw();
+
+                    // The shown side (back of card)
+                    Button back = new Button();
+                    back.SetValue(Grid.RowProperty, j);
+                    back.SetValue(Grid.ColumnProperty, i);
+                    back.Tag = c;
+
+                    // The Hidden side (Front of card)
+                    Image img = new Image();
+                    img.SetValue(Grid.RowProperty, j);
+                    img.SetValue(Grid.ColumnProperty, i);
+                    img.Margin = new Thickness(3);
+                    img.Tag = c;
+
+                    // Add the front of the card,
+                    // then the back of the card
+                    gameGrid.Children.Add(img);
+                    gameGrid.Children.Add(back);
+                }
+            GameGridXaml = XamlWriter.Save(gameGrid);
         }
 
         public void ResetGame() {
@@ -75,5 +115,6 @@ namespace ConcentrationLibrary
         }
 
         public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == _CurrentPlayer);
+
     }
 }

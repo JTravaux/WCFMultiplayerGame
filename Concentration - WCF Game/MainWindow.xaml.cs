@@ -10,17 +10,21 @@ using System;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace ConcentrationClient
 {
+    
     public partial class MainWindow : Window
     {
         BackgroundWorker worker;
+        DispatcherTimer timer;
+        Stopwatch stopwatch;
+        Grid gameGrid;
         IConcentration game;
         ObservableCollection<Player> players;
-
-        Grid gameGrid;
-        Deck deck;
+        ChannelFactory<IConcentration> channel;
 
         public static readonly DependencyProperty CurrentPlayerProperty = DependencyProperty.Register("CurrentPlayer", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
         public int CurrentPlayer {
@@ -28,34 +32,42 @@ namespace ConcentrationClient
             set => SetValue(CurrentPlayerProperty, value);
         }
 
+        public static readonly DependencyProperty CurrentTimeProperty = DependencyProperty.Register("CurrentTime", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+        public string CurrentTime {
+            get => (string)GetValue(CurrentTimeProperty);
+            set => SetValue(CurrentTimeProperty, value);
+        }
+        
         public MainWindow()
         {
-            
             InitializeComponent();
 
-            ChannelFactory<IConcentration> channel = new ChannelFactory<IConcentration>(
-                new NetTcpBinding(), 
-                new EndpointAddress("net.tcp://localhost:5000/ConcentrationLibrary/Concentration"));
-
+            channel = new ChannelFactory<IConcentration>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:5000/ConcentrationLibrary/Concentration"));
             game = channel.CreateChannel();
+            gameGrid = XamlReader.Parse(game.GameGridXaml) as Grid;
 
-            gameGrid = new Grid() { IsEnabled = false };
-
-            for (int j = 0; j < 4; j++)
-                gameGrid.RowDefinitions.Add(new RowDefinition());
-
-            for (int j = 0; j < 13; j++)
-                gameGrid.ColumnDefinitions.Add(new ColumnDefinition());
-
-            SetupGame();
+            // Add the listeners to the buttons and images
+            foreach (UIElement b in gameGrid.Children)
+                if(b.GetType() == typeof(Button))
+                    (b as Button).Click += FlipCard;
+                else if (b.GetType() == typeof(Image))
+                    (b as Image).Source = new BitmapImage(new Uri("Images/" + ((b as Image).Tag as Card).GetRankString() + ((b as Image).Tag as Card).Suit.ToString() + ".png", UriKind.Relative));
 
             mainGrid.Children.Add(gameGrid);
 
+            // Add a background worker for the progress bar
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += Worker_RememberCardsTimer;
             worker.ProgressChanged += Worker_UpdateProgressBar;
             worker.RunWorkerCompleted += Worker_Complete;
+
+            // Add a timer to track the game time
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(1);
+            timer.Tick += Timer_Tick;
+            timer.Start();
+            stopwatch = new Stopwatch();
 
             players = new ObservableCollection<Player>();
             lbPlayers.ItemsSource = players;
@@ -63,42 +75,7 @@ namespace ConcentrationClient
 
             DataContext = this;
         }
-
-        public void SetupGame() {
-            if (deck == null)
-                deck = new Deck();
-            else
-                deck.Repopulate();
-
-            gameGrid.Children.Clear();
-
-            for (int i = 0; i < 13; ++i)
-                for (int j = 0; j < 4; ++j)
-                {
-                    // Draw a new card from the deck
-                    Card c = deck.Draw();
-
-                    // The shown side (back of card)
-                    Button back = new Button();
-                    back.SetValue(Grid.RowProperty, j);
-                    back.SetValue(Grid.ColumnProperty, i);
-                    back.Click += FlipCard;
-                    back.Tag = c;
-
-                    // The Hidden side (Front of card)
-                    Image img = new Image();
-                    img.SetValue(Grid.RowProperty, j);
-                    img.SetValue(Grid.ColumnProperty, i);
-                    img.Source = new BitmapImage(new Uri("Images/" + c.GetCharRank() + c.Suit.ToString() + ".png", UriKind.Relative));
-                    img.Margin = new Thickness(3);
-
-                    // Add the front of the card,
-                    // then the back of the card
-                    gameGrid.Children.Add(img);
-                    gameGrid.Children.Add(back);
-                }
-        }
-
+  
         ///////////////////////
         // GUI Events/Helpers
         //////////////////////
@@ -107,6 +84,12 @@ namespace ConcentrationClient
             gameGrid.IsEnabled = true;
             btnEnd.IsEnabled = true;
 
+            timer.Start();
+            stopwatch.Restart();
+
+            // Reset the game and update the players
+            game.ResetGame();
+            UpdatePlayers();
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
         }
 
@@ -115,17 +98,17 @@ namespace ConcentrationClient
             gameGrid.IsEnabled = false;
             btnStart.IsEnabled = true;
 
-            // Reset the game and update the players
-            game.ResetGame();
-            UpdatePlayers();
-            CurrentPlayer = game.CurrentPlayer;
-
             // Reset the progress bar
             pbText.Text = "";
             pbRememberCardsTimer.Value = 0;
 
+            // Stop the timers
+            timer.Stop();
+            stopwatch.Stop();
+
             // Setup next game
-            SetupGame();
+            //???????????????
+
         }
         
         private void FlipCard(object sender, RoutedEventArgs e) {
@@ -205,5 +188,7 @@ namespace ConcentrationClient
             CurrentPlayer = game.CurrentPlayer;
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
         }
+
+        private void Timer_Tick(object sender, EventArgs e) => CurrentTime = stopwatch.Elapsed.ToString("mm\\:ss\\:ff");
     }
 }

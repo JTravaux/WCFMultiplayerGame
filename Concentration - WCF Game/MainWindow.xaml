@@ -21,6 +21,11 @@
         <StackPanel Grid.Column="1" VerticalAlignment="Center">
 
             <WrapPanel HorizontalAlignment="Center">
+                <Label Content="Game Time: " />
+                <Label x:Name="lblGameTime" Content="{Binding CurrentTime}"/>
+            </WrapPanel>
+            
+            <WrapPanel HorizontalAlignment="Center">
                 <Label Content="Current Player: " />
                 <Label x:Name="lblPlayer" Content="{Binding CurrentPlayer}"/>
             </WrapPanel>

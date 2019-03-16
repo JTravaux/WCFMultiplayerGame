@@ -55,8 +55,9 @@ namespace ConcentrationClient
             // Assign the player number
             PlayerID = game.AddPlayer();
 
-            if(PlayerID >= 7) {
+            if(PlayerID == 0) {
                 MessageBox.Show("Players 6/6. Game is full, please try again later.", "Game is Full", MessageBoxButton.OK, MessageBoxImage.Error);
+                channel.Close();
                 Close();
             }
 
@@ -127,7 +128,6 @@ namespace ConcentrationClient
             stopwatch.Stop();
         }
         
-
         private void FlipCard(object sender, RoutedEventArgs e) {
             game.CardsFlipped++;
 
@@ -189,7 +189,7 @@ namespace ConcentrationClient
         void Worker_RememberCardsTimer(object sender, DoWorkEventArgs e) {
             for (int i = 0; i < 100; i++) {
                 (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep((int)game.GameDifficulty);
+                Thread.Sleep(5);
             }
         }
 

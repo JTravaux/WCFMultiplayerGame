@@ -21,6 +21,7 @@ namespace ConcentrationClient
         BackgroundWorker worker;
         DispatcherTimer timer;
         Stopwatch stopwatch;
+
         Grid gameGrid;
         IConcentration game;
         ObservableCollection<Player> players;
@@ -40,12 +41,14 @@ namespace ConcentrationClient
         
         public MainWindow()
         {
+            
             InitializeComponent();
+            
 
             channel = new ChannelFactory<IConcentration>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:5000/ConcentrationLibrary/Concentration"));
             game = channel.CreateChannel();
             gameGrid = XamlReader.Parse(game.GameGridXaml) as Grid;
-
+            
             // Add the listeners to the buttons and images
             foreach (UIElement b in gameGrid.Children)
                 if(b.GetType() == typeof(Button))
@@ -82,35 +85,36 @@ namespace ConcentrationClient
         private void StartGame(object sender, RoutedEventArgs e) {
             (sender as Button).IsEnabled = false;
             gameGrid.IsEnabled = true;
-            btnEnd.IsEnabled = true;
+            btnPause.IsEnabled = true;
 
             timer.Start();
-            stopwatch.Restart();
+            stopwatch.Start();
 
-            // Reset the game and update the players
-            game.ResetGame();
+            // Update the players
             UpdatePlayers();
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
+
+            // Reset the progress bar
+            pbText.Text = "";
+            pbRememberCardsTimer.Value = 0;
         }
 
-        private void EndGame(object sender, RoutedEventArgs e) {
+        private void PauseGame(object sender, RoutedEventArgs e) {
             (sender as Button).IsEnabled = false;
             gameGrid.IsEnabled = false;
             btnStart.IsEnabled = true;
 
             // Reset the progress bar
-            pbText.Text = "";
-            pbRememberCardsTimer.Value = 0;
+            pbText.Text = "Game Paused";
+            pbRememberCardsTimer.Foreground = Brushes.Yellow;
+            pbRememberCardsTimer.Value = 100;
 
             // Stop the timers
             timer.Stop();
             stopwatch.Stop();
-
-            // Setup next game
-            //???????????????
-
         }
         
+
         private void FlipCard(object sender, RoutedEventArgs e) {
             game.CardsFlipped++;
 

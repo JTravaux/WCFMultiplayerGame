@@ -20,7 +20,7 @@ namespace ConcentrationService
 
                 // Manage the service’s life cycle
                 servHost.Open();
-
+                
                 Console.WriteLine("Service started. Press a key to quit.");
             }
             catch (Exception ex)
@@ -33,11 +33,6 @@ namespace ConcentrationService
                 if (servHost != null)
                     servHost.Close();
             }
-        }
-
-        private static void ServHost_UnknownMessageReceived(object sender, UnknownMessageReceivedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
     }
 }

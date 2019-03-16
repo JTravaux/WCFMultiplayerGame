@@ -36,7 +36,7 @@
 
             <WrapPanel HorizontalAlignment="Center">
                 <Button x:Name="btnStart" Content="Start Game" Margin="5" Padding="2" Click="StartGame"/>
-                <Button x:Name="btnEnd" Content="End Game" Margin="5" Padding="2" IsEnabled="False" Click="EndGame"/>
+                <Button x:Name="btnPause" Content="Pause Game" Margin="5" Padding="2" IsEnabled="False" Click="PauseGame"/>
             </WrapPanel>
 
             <Grid Margin="5">

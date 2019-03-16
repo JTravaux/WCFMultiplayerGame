@@ -6,13 +6,14 @@ using System.ServiceModel;
 using System.Runtime.Serialization;
 using static ConcentrationLibrary.Concentration;
 using System.Windows.Markup;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace ConcentrationLibrary
 {
     [ServiceContract]
     public interface IConcentration {
         [OperationContract] Player GetCurrentPlayer();
-        [OperationContract] void ResetGame();
         [OperationContract] void PointScored();
 
         List<Player> Players { [OperationContract]get; [OperationContract]set; }
@@ -33,7 +34,6 @@ namespace ConcentrationLibrary
         public enum Difficulty { Easy = 25, Normal = 15, Hard = 5 };
         public Difficulty GameDifficulty { get; set; }
         public List<Player> Players { get; set; }
-
         public string FirstBtnXaml { get; set; }
         public string SecondBtnXaml { get; set; }
         public string GameGridXaml { get; set; }
@@ -41,6 +41,8 @@ namespace ConcentrationLibrary
         public Card FirstCard { get; set; }
         public Card SecondCard { get; set; }
         public Deck GameDeck { get; set; }
+
+        private Grid gameGrid;
 
         private int _CurrentPlayer;
         public int CurrentPlayer {
@@ -54,14 +56,14 @@ namespace ConcentrationLibrary
         }
 
         public Concentration() {
-            Players = new List<Player>();
+            Players = new List<Player>(); 
             _CurrentPlayer = 1;
             GameDifficulty = Difficulty.Hard;
 
             for (int i = 1; i <= 2; i++)
                 Players.Add(new Player(i));
 
-            Grid gameGrid = new Grid() { IsEnabled = false };
+            gameGrid = new Grid() { IsEnabled = false };
 
             for (int j = 0; j < 4; j++)
                 gameGrid.RowDefinitions.Add(new RowDefinition());
@@ -97,15 +99,10 @@ namespace ConcentrationLibrary
                     // then the back of the card
                     gameGrid.Children.Add(img);
                     gameGrid.Children.Add(back);
-                }
-            GameGridXaml = XamlWriter.Save(gameGrid);
-        }
 
-        public void ResetGame() {
-            foreach (Player p in Players)
-                p.Points = 0;
-            _CurrentPlayer = 1;
-            CardsFlipped = 0;
+                }
+
+            GameGridXaml = XamlWriter.Save(gameGrid);
         }
 
         public void PointScored() {
@@ -115,6 +112,5 @@ namespace ConcentrationLibrary
         }
 
         public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == _CurrentPlayer);
-
     }
 }

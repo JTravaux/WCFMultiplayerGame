@@ -24,7 +24,12 @@
                 <Label Content="Game Time: " />
                 <Label x:Name="lblGameTime" Content="{Binding CurrentTime}"/>
             </WrapPanel>
-            
+
+            <WrapPanel HorizontalAlignment="Center">
+                <Label Content="Player Number:" />
+                <Label x:Name="lblPlayerID" Content="{Binding PlayerID}"/>
+            </WrapPanel>
+
             <WrapPanel HorizontalAlignment="Center">
                 <Label Content="Current Player: " />
                 <Label x:Name="lblPlayer" Content="{Binding CurrentPlayer}"/>

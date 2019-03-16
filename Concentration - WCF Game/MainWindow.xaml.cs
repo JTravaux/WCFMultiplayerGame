@@ -15,13 +15,13 @@ using System.Diagnostics;
 
 namespace ConcentrationClient
 {
-    
     public partial class MainWindow : Window
     {
+        
         BackgroundWorker worker;
         DispatcherTimer timer;
         Stopwatch stopwatch;
-
+        
         Grid gameGrid;
         IConcentration game;
         ObservableCollection<Player> players;
@@ -38,15 +38,28 @@ namespace ConcentrationClient
             get => (string)GetValue(CurrentTimeProperty);
             set => SetValue(CurrentTimeProperty, value);
         }
-        
+
+        public static readonly DependencyProperty PlayerIDProperty = DependencyProperty.Register("PlayerID", typeof(int), typeof(MainWindow), new PropertyMetadata(0));
+        public int PlayerID {
+            get { return (int)GetValue(PlayerIDProperty); }
+            set { SetValue(PlayerIDProperty, value); }
+        }
+
         public MainWindow()
         {
-            
             InitializeComponent();
-            
 
             channel = new ChannelFactory<IConcentration>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:5000/ConcentrationLibrary/Concentration"));
             game = channel.CreateChannel();
+
+            // Assign the player number
+            PlayerID = game.AddPlayer();
+
+            if(PlayerID >= 7) {
+                MessageBox.Show("Players 6/6. Game is full, please try again later.", "Game is Full", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
+
             gameGrid = XamlReader.Parse(game.GameGridXaml) as Grid;
             
             // Add the listeners to the buttons and images
@@ -78,7 +91,7 @@ namespace ConcentrationClient
 
             DataContext = this;
         }
-  
+
         ///////////////////////
         // GUI Events/Helpers
         //////////////////////

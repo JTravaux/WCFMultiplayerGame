@@ -26,6 +26,9 @@ namespace ConcentrationLibrary
         Card SecondCard { [OperationContract]get; [OperationContract]set; }
         Deck GameDeck { [OperationContract]get; [OperationContract]set; }
         Difficulty GameDifficulty { [OperationContract]get; [OperationContract]set; }
+
+        int NumPlayers { [OperationContract]get; [OperationContract]set; }
+        [OperationContract] int AddPlayer();
     }
 
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
@@ -38,6 +41,7 @@ namespace ConcentrationLibrary
         public string SecondBtnXaml { get; set; }
         public string GameGridXaml { get; set; }
         public int CardsFlipped { get; set; }
+        public int NumPlayers { get; set; }
         public Card FirstCard { get; set; }
         public Card SecondCard { get; set; }
         public Deck GameDeck { get; set; }
@@ -56,12 +60,9 @@ namespace ConcentrationLibrary
         }
 
         public Concentration() {
-            Players = new List<Player>(); 
+            Players = new List<Player>();
             _CurrentPlayer = 1;
             GameDifficulty = Difficulty.Hard;
-
-            for (int i = 1; i <= 2; i++)
-                Players.Add(new Player(i));
 
             gameGrid = new Grid() { IsEnabled = false };
 
@@ -99,9 +100,7 @@ namespace ConcentrationLibrary
                     // then the back of the card
                     gameGrid.Children.Add(img);
                     gameGrid.Children.Add(back);
-
                 }
-
             GameGridXaml = XamlWriter.Save(gameGrid);
         }
 
@@ -112,5 +111,9 @@ namespace ConcentrationLibrary
         }
 
         public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == _CurrentPlayer);
+        public int AddPlayer(){
+            Players.Add(new Player(++NumPlayers));
+            return NumPlayers; 
+        }
     }
 }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.ServiceModel;
-using System.Runtime.Serialization;
-using static ConcentrationLibrary.Concentration;
 using System.Windows.Markup;
-using System.Threading;
-using System.Windows.Threading;
 
 namespace ConcentrationLibrary
 {
@@ -33,7 +28,7 @@ namespace ConcentrationLibrary
     public class Concentration : IConcentration
     {
         private Grid gameGrid;
-        private int _CurrentPlayer;
+        private int currentPlayer;
 
         public List<Player> Players { get; set; }
         public string FirstBtnXaml { get; set; }
@@ -45,26 +40,22 @@ namespace ConcentrationLibrary
         public Card SecondCard { get; set; }
         public Deck GameDeck { get; set; }
         public int CurrentPlayer {
-            get => _CurrentPlayer;
-            set => _CurrentPlayer = _CurrentPlayer >= Players.Count ? 1 : value;
+            get => currentPlayer;
+            set => currentPlayer = currentPlayer >= Players.Count ? 1 : value;
         }
 
         public Concentration() {
             Players = new List<Player>();
-            _CurrentPlayer = 1;
-
             gameGrid = new Grid() { IsEnabled = false };
+            GameDeck = new Deck();
+            currentPlayer = 1;
 
-            for (int j = 0; j < 4; j++)
-                gameGrid.RowDefinitions.Add(new RowDefinition());
-
-            for (int j = 0; j < 13; j++)
+            // Add 4 rows and 13 columns
+            for (int i = 0; i < 13; i++){
+                if (i < 4)
+                    gameGrid.RowDefinitions.Add(new RowDefinition());
                 gameGrid.ColumnDefinitions.Add(new ColumnDefinition());
-
-            if (GameDeck == null)
-                GameDeck = new Deck();
-            else
-                GameDeck.Repopulate();
+            }
 
             for (int i = 0; i < 13; ++i)
                 for (int j = 0; j < 4; ++j)
@@ -95,7 +86,7 @@ namespace ConcentrationLibrary
 
         public void PointScored() {
             foreach (Player p in Players)
-                if (p.PlayerID == _CurrentPlayer)
+                if (p.PlayerID == currentPlayer)
                     p.Points++;
         }
 
@@ -104,10 +95,9 @@ namespace ConcentrationLibrary
                 return 0;
             else
                 Players.Add(new Player(++NumPlayers));
-
             return NumPlayers;
         }
 
-        public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == _CurrentPlayer);
+        public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == currentPlayer);
     }
 }

@@ -9,7 +9,6 @@ using System.ServiceModel;
 using System;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Diagnostics;
 
@@ -80,12 +79,12 @@ namespace ConcentrationClient
             worker.RunWorkerCompleted += Worker_Complete;
 
             // Add a timer to track the game time
+            stopwatch = new Stopwatch();
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(1);
             timer.Tick += Timer_Tick;
             timer.Start();
-            stopwatch = new Stopwatch();
-
+            
             players = new ObservableCollection<Player>();
             lbPlayers.ItemsSource = players;
             UpdatePlayers();
@@ -168,8 +167,6 @@ namespace ConcentrationClient
                 players.Add(p);
         }
 
-        private Button GetButtonFromXaml(string xaml) => XamlReader.Parse(xaml) as Button;
-
         private void FindButtonChangeVisibility(Button btn, bool hidden = false) {
             foreach (UIElement b in gameGrid.Children)
                 if (b.GetType() == typeof(Button))
@@ -181,11 +178,14 @@ namespace ConcentrationClient
                                 b.Visibility = Visibility.Visible;
         }
 
+        private Button GetButtonFromXaml(string xaml) => XamlReader.Parse(xaml) as Button;
+
         /*---------------
          Worker methods
         --------------- */
+        void Timer_Tick(object sender, EventArgs e) => CurrentTime = stopwatch.Elapsed.ToString("mm\\:ss\\:ff");
         void Worker_UpdateProgressBar(object sender, ProgressChangedEventArgs e) => pbRememberCardsTimer.Value = e.ProgressPercentage;
-
+        
         void Worker_RememberCardsTimer(object sender, DoWorkEventArgs e) {
             for (int i = 0; i < 100; i++) {
                 (sender as BackgroundWorker).ReportProgress(i);
@@ -205,7 +205,5 @@ namespace ConcentrationClient
             CurrentPlayer = game.CurrentPlayer;
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
         }
-
-        private void Timer_Tick(object sender, EventArgs e) => CurrentTime = stopwatch.Elapsed.ToString("mm\\:ss\\:ff");
     }
 }

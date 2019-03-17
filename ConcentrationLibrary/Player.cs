@@ -3,7 +3,8 @@
 namespace ConcentrationLibrary
 {
     [DataContract]
-    public class Player {
+    public class Player
+    {
         [DataMember] public int Points { get; set; }
         [DataMember] public int PlayerID { get; set; }
 

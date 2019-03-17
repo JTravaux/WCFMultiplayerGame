@@ -20,7 +20,7 @@ namespace ConcentrationLibrary
         public Card() { }
         public Card(SuitID s, RankID r, ColorID c) { Suit = s; Rank = r; Color = c; }
 
-        public override string ToString() => Rank.ToString() + "\n" + Suit.ToString() + "\n" + Color.ToString();
+        public override string ToString() => Rank.ToString() + ", " + Suit.ToString();
 
         public string GetRankString() {
             switch (Rank) {

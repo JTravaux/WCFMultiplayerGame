@@ -10,20 +10,15 @@ namespace ConcentrationService
         static void Main(string[] args)
         {
             ServiceHost servHost = null;
-            try
-            {
-                // Address
+            try {
                 servHost = new ServiceHost(typeof(Concentration));
                 servHost.Open();
-                
                 Console.WriteLine("Service started. Press a key to quit.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Console.WriteLine(ex.Message);
             }
-            finally
-            {
+            finally {
                 Console.ReadKey();
                 if (servHost != null)
                     servHost.Close();

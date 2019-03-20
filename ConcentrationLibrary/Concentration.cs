@@ -4,10 +4,9 @@ using System.Windows.Controls;
 using System.ServiceModel;
 using System.Windows.Markup;
 
-
 // Callbacks Needed
     // Someone scored a point
-    // When a cars is flipped
+    // When a card is flipped
     // When a player joins the game
     // When the game is started
     // When the game is paused
@@ -17,7 +16,6 @@ namespace ConcentrationLibrary
 {
     [ServiceContract]
     public interface IConcentration {
-        [OperationContract] Player GetCurrentPlayer();
         [OperationContract] void PointScored();
         [OperationContract] int AddPlayer();
 
@@ -67,8 +65,7 @@ namespace ConcentrationLibrary
             }
 
             for (int i = 0; i < 13; ++i)
-                for (int j = 0; j < 4; ++j)
-                {
+                for (int j = 0; j < 4; ++j) {
                     // Draw a new card from the deck
                     Card c = GameDeck.Draw();
 
@@ -93,12 +90,15 @@ namespace ConcentrationLibrary
             GameGridXaml = XamlWriter.Save(gameGrid);
         }
 
+        // Assigns a point to the current player
         public void PointScored() {
             foreach (Player p in Players)
                 if (p.PlayerID == currentPlayer)
                     p.Points++;
         }
 
+        // Add a player to the game
+        // Current max = 6 players
         public int AddPlayer() {
             if(NumPlayers + 1 >= 7)
                 return 0;
@@ -106,7 +106,5 @@ namespace ConcentrationLibrary
                 Players.Add(new Player(++NumPlayers));
             return NumPlayers;
         }
-
-        public Player GetCurrentPlayer() => Players.Find(p => p.PlayerID == currentPlayer);
     }
 }

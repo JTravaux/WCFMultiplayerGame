@@ -22,6 +22,7 @@ namespace ConcentrationLibrary
 
         public override string ToString() => Rank.ToString() + ", " + Suit.ToString();
 
+        // Get the rank string for the images
         public string GetRankString() {
             switch (Rank) {
                 case RankID.Ace:

@@ -16,11 +16,11 @@ namespace ConcentrationClient
 {
     public partial class MainWindow : Window
     {
+        IConcentration game;
         BackgroundWorker worker;
         DispatcherTimer timer;
         Stopwatch stopwatch;
         Grid gameGrid;
-        IConcentration game;
         ObservableCollection<Player> players;
 
         public static readonly DependencyProperty CurrentPlayerProperty = DependencyProperty.Register("CurrentPlayer", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
@@ -58,7 +58,7 @@ namespace ConcentrationClient
 
             gameGrid = XamlReader.Parse(game.GameGridXaml) as Grid;
             
-            // Add the listeners to the buttons and images
+            // Add the listeners to the buttons and images for the cards
             foreach (UIElement b in gameGrid.Children)
                 if(b.GetType() == typeof(Button))
                     (b as Button).Click += FlipCard;
@@ -92,7 +92,7 @@ namespace ConcentrationClient
         // GUI Events/Helpers
         //////////////////////
         private void StartGame(object sender, RoutedEventArgs e) {
-            (sender as Button).IsEnabled = false;
+            btnStart.IsEnabled = false;
             gameGrid.IsEnabled = true;
             btnPause.IsEnabled = true;
 
@@ -109,7 +109,7 @@ namespace ConcentrationClient
         }
 
         private void PauseGame(object sender, RoutedEventArgs e) {
-            (sender as Button).IsEnabled = false;
+            btnPause.IsEnabled = false;
             gameGrid.IsEnabled = false;
             btnStart.IsEnabled = true;
 
@@ -143,9 +143,11 @@ namespace ConcentrationClient
                     game.PointScored();
                     UpdatePlayers();
                     game.CardsFlipped = 0;
+
                     pbText.Text = "Point Awarded!";
                     pbRememberCardsTimer.Foreground = Brushes.LimeGreen;
                     pbRememberCardsTimer.Value = 100;
+
                     lbPlayers.SelectedIndex = CurrentPlayer - 1;
                 }
                 else
@@ -185,7 +187,7 @@ namespace ConcentrationClient
         void Worker_RememberCardsTimer(object sender, DoWorkEventArgs e) {
             for (int i = 0; i < 100; i++) {
                 (sender as BackgroundWorker).ReportProgress(i);
-                Thread.Sleep(5);
+                Thread.Sleep(7);
             }
         }
 

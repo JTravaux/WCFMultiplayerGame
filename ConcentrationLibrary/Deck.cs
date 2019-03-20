@@ -9,17 +9,11 @@ namespace ConcentrationLibrary
     public class Deck
     {
         [DataMember] private List<Card> cards;   // The deck of cards
-        [DataMember] private int cardIdx;        // The next index to draw a card from
+        [DataMember] private int index;         // The next index to draw a card from
 
         // Constructor
-        public Deck() => Repopulate();
-
-        // Draw a card from the deck
-        public Card Draw() => cards[cardIdx++];
-
-        // Repopulate the deck of cards
-        public void Repopulate() {
-
+        public Deck()
+        {
             // Create a new deck of cards
             cards = new List<Card>();
 
@@ -34,7 +28,10 @@ namespace ConcentrationLibrary
             // Randomize the deck
             Random rng = new Random();
             cards = cards.OrderBy(number => rng.Next()).ToList();
-            cardIdx = 0;
+            index = 0;
         }
+
+        // Draw a card from the deck
+        public Card Draw() => cards[index++];
     }
 }

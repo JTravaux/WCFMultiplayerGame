@@ -16,15 +16,12 @@ namespace ConcentrationClient
 {
     public partial class MainWindow : Window
     {
-        
         BackgroundWorker worker;
         DispatcherTimer timer;
         Stopwatch stopwatch;
-        
         Grid gameGrid;
         IConcentration game;
         ObservableCollection<Player> players;
-        ChannelFactory<IConcentration> channel;
 
         public static readonly DependencyProperty CurrentPlayerProperty = DependencyProperty.Register("CurrentPlayer", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
         public int CurrentPlayer {
@@ -44,11 +41,10 @@ namespace ConcentrationClient
             set { SetValue(PlayerIDProperty, value); }
         }
 
-        public MainWindow()
-        {
+        public MainWindow() {
             InitializeComponent();
 
-            channel = new ChannelFactory<IConcentration>(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:5000/ConcentrationLibrary/Concentration"));
+            ChannelFactory<IConcentration> channel = new ChannelFactory<IConcentration>("ConcentrationService");
             game = channel.CreateChannel();
 
             // Assign the player number

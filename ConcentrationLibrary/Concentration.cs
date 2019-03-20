@@ -4,6 +4,15 @@ using System.Windows.Controls;
 using System.ServiceModel;
 using System.Windows.Markup;
 
+
+// Callbacks Needed
+    // Someone scored a point
+    // When a cars is flipped
+    // When a player joins the game
+    // When the game is started
+    // When the game is paused
+    // When the game is finished
+
 namespace ConcentrationLibrary
 {
     [ServiceContract]

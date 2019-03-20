@@ -34,7 +34,6 @@ namespace ConcentrationLibrary
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class Concentration : IConcentration
     {
-        private Grid gameGrid;
         private int currentPlayer;
 
         public List<Player> Players { get; set; }
@@ -53,7 +52,7 @@ namespace ConcentrationLibrary
 
         public Concentration() {
             Players = new List<Player>();
-            gameGrid = new Grid() { IsEnabled = false };
+            Grid gameGrid = new Grid() { IsEnabled = false };
             GameDeck = new Deck();
             currentPlayer = 1;
 

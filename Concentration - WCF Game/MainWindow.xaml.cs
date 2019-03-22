@@ -43,8 +43,8 @@ namespace ConcentrationClient
 
         public MainWindow() {
             InitializeComponent();
-            //DuplexChannelFactory<IConcentration> channel = new DuplexChannelFactory<IConcentration>(typeof(ICallback), "ConcentrationService");
-            ChannelFactory<IConcentration> channel = new ChannelFactory<IConcentration>("ConcentrationService");
+
+            DuplexChannelFactory<IConcentration> channel = new DuplexChannelFactory<IConcentration>(this, "ConcentrationService");
             game = channel.CreateChannel();
 
             // Assign the player number

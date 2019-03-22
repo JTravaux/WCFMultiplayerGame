@@ -6,7 +6,7 @@ using System.Windows.Markup;
 
 namespace ConcentrationLibrary
 {
-    [ServiceContract(/*CallbackContract = typeof(ICallback)*/)]
+    [ServiceContract(CallbackContract = typeof(ICallback))]
     public interface IConcentration {
         [OperationContract] void PointScored();
         [OperationContract] int AddPlayer();
@@ -100,7 +100,7 @@ namespace ConcentrationLibrary
                 Players.Add(new Player(++NumPlayers));
 
             // Subscribe to callbacks
-            //callbacks.Add(OperationContext.Current.GetCallbackChannel<ICallback>());
+            callbacks.Add(OperationContext.Current.GetCallbackChannel<ICallback>());
 
             return NumPlayers;
         }

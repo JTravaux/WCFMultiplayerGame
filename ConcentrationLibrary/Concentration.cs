@@ -8,7 +8,7 @@ namespace ConcentrationLibrary
 {
     [ServiceContract(CallbackContract = typeof(ICallback))]
     public interface IConcentration {
-        [OperationContract] void PointScored();
+        [OperationContract(IsOneWay = true)] void PointScored();
         [OperationContract] int AddPlayer();
 
         List<Player> Players { [OperationContract]get; [OperationContract]set; }

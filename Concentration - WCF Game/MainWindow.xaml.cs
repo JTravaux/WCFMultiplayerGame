@@ -14,6 +14,7 @@ using System.Diagnostics;
 
 namespace ConcentrationClient
 {
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false)]
     public partial class MainWindow : Window, ICallback
     {
         IConcentration game;

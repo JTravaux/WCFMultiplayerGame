@@ -2,12 +2,12 @@
 namespace ConcentrationLibrary
 {
     public interface ICallback {
-        [OperationContract] void PointScored();
-        [OperationContract] void CardFlipped(string btnXaml, Card card);
-        [OperationContract] void PlayerJoinedGame();
-        [OperationContract] void GameStarted();
-        [OperationContract] void GamePaused();
-        [OperationContract] void GameFinished();
-        [OperationContract] void NextPlayer();
+        [OperationContract(IsOneWay = true)] void PointScored();
+        [OperationContract(IsOneWay = true)] void CardFlipped(string btnXaml, Card card);
+        [OperationContract(IsOneWay = true)] void PlayerJoinedGame();
+        [OperationContract(IsOneWay = true)] void GameStarted();
+        [OperationContract(IsOneWay = true)] void GamePaused();
+        [OperationContract(IsOneWay = true)] void GameFinished();
+        [OperationContract(IsOneWay = true)] void NextPlayer();
     }
 }

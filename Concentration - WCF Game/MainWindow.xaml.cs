@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 namespace ConcentrationClient
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, ICallback
     {
         IConcentration game;
         BackgroundWorker worker;
@@ -43,7 +43,7 @@ namespace ConcentrationClient
 
         public MainWindow() {
             InitializeComponent();
-
+            //DuplexChannelFactory<IConcentration> channel = new DuplexChannelFactory<IConcentration>(typeof(ICallback), "ConcentrationService");
             ChannelFactory<IConcentration> channel = new ChannelFactory<IConcentration>("ConcentrationService");
             game = channel.CreateChannel();
 
@@ -202,6 +202,42 @@ namespace ConcentrationClient
             game.CurrentPlayer++;
             CurrentPlayer = game.CurrentPlayer;
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
+        }
+
+
+        public void PointScored()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CardFlipped(string btnXaml, Card card)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PlayerJoinedGame()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GameStarted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GamePaused()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GameFinished()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void NextPlayer()
+        {
+            throw new NotImplementedException();
         }
     }
 }

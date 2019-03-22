@@ -49,6 +49,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="Concentration.cs" />
     <Compile Include="Deck.cs" />
+    <Compile Include="ICallback.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

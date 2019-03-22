@@ -4,17 +4,9 @@ using System.Windows.Controls;
 using System.ServiceModel;
 using System.Windows.Markup;
 
-// Callbacks Needed
-    // Someone scored a point
-    // When a card is flipped
-    // When a player joins the game
-    // When the game is started
-    // When the game is paused
-    // When the game is finished
-
 namespace ConcentrationLibrary
 {
-    [ServiceContract]
+    [ServiceContract(/*CallbackContract = typeof(ICallback)*/)]
     public interface IConcentration {
         [OperationContract] void PointScored();
         [OperationContract] int AddPlayer();
@@ -35,6 +27,7 @@ namespace ConcentrationLibrary
     public class Concentration : IConcentration
     {
         private int currentPlayer;
+        private HashSet<ICallback> callbacks;
 
         public List<Player> Players { get; set; }
         public string FirstBtnXaml { get; set; }
@@ -52,6 +45,7 @@ namespace ConcentrationLibrary
 
         public Concentration() {
             Players = new List<Player>();
+            callbacks = new HashSet<ICallback>();
             Grid gameGrid = new Grid() { IsEnabled = false };
             GameDeck = new Deck();
             currentPlayer = 1;
@@ -86,6 +80,7 @@ namespace ConcentrationLibrary
                     gameGrid.Children.Add(img);
                     gameGrid.Children.Add(back);
                 }
+
             GameGridXaml = XamlWriter.Save(gameGrid);
         }
 
@@ -103,6 +98,10 @@ namespace ConcentrationLibrary
                 return 0;
             else
                 Players.Add(new Player(++NumPlayers));
+
+            // Subscribe to callbacks
+            //callbacks.Add(OperationContext.Current.GetCallbackChannel<ICallback>());
+
             return NumPlayers;
         }
     }

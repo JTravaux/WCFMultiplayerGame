@@ -204,10 +204,11 @@ namespace ConcentrationClient
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
         }
 
-
-        public void PointScored()
-        {
-            throw new NotImplementedException();
+        /////////////////////
+        // Callback Methods
+        /////////////////////
+        public void PointScored() {
+            UpdatePlayers();
         }
 
         public void CardFlipped(string btnXaml, Card card)
@@ -237,7 +238,9 @@ namespace ConcentrationClient
 
         public void NextPlayer()
         {
-            throw new NotImplementedException();
+            // If the game's current player is = to this client's playerID, do nothing
+
+            // Else, make the grid unplayable since it's not your turn
         }
     }
 }

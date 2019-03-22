@@ -89,6 +89,9 @@ namespace ConcentrationLibrary
             foreach (Player p in Players)
                 if (p.PlayerID == currentPlayer)
                     p.Points++;
+
+            //foreach (ICallback callback in callbacks)
+            //    callback.PointScored();
         }
 
         // Add a player to the game

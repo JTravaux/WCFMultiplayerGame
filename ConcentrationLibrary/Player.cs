@@ -12,6 +12,7 @@ namespace ConcentrationLibrary
         [DataMember] public int Points { get; set; }
         [DataMember] public int PlayerID { get; set; }
 
+        // Create a new player
         public Player(int playerNum) {
             PlayerID = playerNum;
             Points = 0;

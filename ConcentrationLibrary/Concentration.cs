@@ -69,6 +69,7 @@ namespace ConcentrationLibrary
                 gameGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
 
+            // Create the game board
             for (int i = 0; i < 13; ++i)
                 for (int j = 0; j < 4; ++j) {
                     // Draw a new card from the deck
@@ -119,18 +120,6 @@ namespace ConcentrationLibrary
             return NumPlayers;
         }
 
-        // Toggle callbacks for the clients
-        public bool ToggleCallbacks() {
-            ICallback cb = OperationContext.Current.GetCallbackChannel<ICallback>();
-            if (callbacks.Contains(cb)) {
-                callbacks.Remove(cb);
-                return false;
-            } else {
-                callbacks.Add(cb);
-                return true;
-            }
-        }
-
         // Send a notification to all clients that the game has started
         public bool StartGame() {
             foreach (ICallback callback in callbacks)
@@ -146,6 +135,7 @@ namespace ConcentrationLibrary
             return true;
         }
 
+        // Send a notification to all clients that a card has been flipped
         public void NotifyCardFlip() {
             foreach (ICallback callback in callbacks)
                 if (CardsFlipped == 1)
@@ -153,5 +143,18 @@ namespace ConcentrationLibrary
                 else
                     callback.CardFlipped(SecondBtnXaml);
         }
-    }
-}
+
+        // Toggle callbacks for the clients
+        public bool ToggleCallbacks() {
+            ICallback cb = OperationContext.Current.GetCallbackChannel<ICallback>();
+            if (callbacks.Contains(cb)) {
+                callbacks.Remove(cb);
+                return false;
+            } else {
+                callbacks.Add(cb);
+                return true;
+            }
+        }
+
+    } // end class
+} // end namespace

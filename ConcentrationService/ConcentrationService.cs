@@ -11,8 +11,7 @@ namespace ConcentrationService
     class ConcentrationService
     {
         [STAThread]
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
             ServiceHost servHost = null;
             try {
                 servHost = new ServiceHost(typeof(Concentration));

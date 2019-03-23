@@ -9,7 +9,6 @@ namespace ConcentrationLibrary
     [DataContract]
     public class Card
     {
-        // Enumerations
         public enum SuitID { C, D, H, S }; // Clubs, Diamonds, Hearts, Spades
         public enum RankID { Ace, King, Queen, Jack, Ten, Nine, Eight, Seven, Six, Five, Four, Three, Two };
         public enum ColorID { Black, Red };

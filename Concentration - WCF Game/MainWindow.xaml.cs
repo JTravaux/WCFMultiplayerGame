@@ -25,10 +25,9 @@ namespace ConcentrationClient
         BackgroundWorker worker;
         DispatcherTimer timer;
         Grid gameGrid;
-        IConcentration game;
         ObservableCollection<Player> players;
         Stopwatch stopwatch;
-
+        IConcentration game;
         bool callbacksEnabled;
         bool gameStarted;
         bool gamePaused;
@@ -49,6 +48,7 @@ namespace ConcentrationClient
         public MainWindow() {
             InitializeComponent();
 
+            // Connect to the service
             DuplexChannelFactory<IConcentration> channel = new DuplexChannelFactory<IConcentration>(this, "ConcentrationService");
             game = channel.CreateChannel();
 

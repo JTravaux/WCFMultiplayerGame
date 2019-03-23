@@ -1,6 +1,6 @@
 ﻿// Names:   Jordan Travaux & Abel Emun
 // Date:    March 18, 2019
-// Purpose: Service contract and implementation for the game
+// Purpose: Definition of the ConcentrationLibrary service and it's implementation
 
 using System.Collections.Generic;
 using System.Windows;

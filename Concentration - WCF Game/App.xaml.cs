@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 18, 2019
+// Purpose: Application startup
+
+using System.Windows;
 
 namespace ConcentrationClient
 {

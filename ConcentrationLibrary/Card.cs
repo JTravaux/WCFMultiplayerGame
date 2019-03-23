@@ -1,6 +1,6 @@
 ﻿// Names:   Jordan Travaux & Abel Emun
 // Date:    March 18, 2019
-// Purpose: Definition of the ConcentrationLibrary service and it's implementation
+// Purpose: Definition of a playing card to be used for the game
 
 using System.Runtime.Serialization;
 
@@ -19,7 +19,7 @@ namespace ConcentrationLibrary
         [DataMember] public ColorID Color { get; set; }
 
         // Constructors
-        public Card() { }
+        public Card() { } // Needed for serialization
         public Card(SuitID s, RankID r, ColorID c) { Suit = s; Rank = r; Color = c; }
 
         public override string ToString() => Rank.ToString() + ", " + Suit.ToString();

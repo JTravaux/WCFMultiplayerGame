@@ -1,6 +1,6 @@
 ﻿// Names:   Jordan Travaux & Abel Emun
 // Date:    March 20, 2019
-// Purpose: Definition of a deck of cards to be used for the game
+// Purpose: Definition of a deck of cards to be used for the game (no external access)
 
 using System;
 using System.Collections.Generic;
@@ -10,8 +10,8 @@ namespace ConcentrationLibrary
 {
     public class Deck
     {
-        private List<Card> cards;   // The deck of cards
-        private int index;         // The next index to draw a card from
+        private List<Card> cards;
+        private int index;
 
         // Constructor
         public Deck()

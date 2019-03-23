@@ -1,4 +1,8 @@
-﻿using ConcentrationLibrary;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 23, 2019
+// Purpose: GUI for the concentration end game
+
+using ConcentrationLibrary;
 using System;
 using System.Windows;
 

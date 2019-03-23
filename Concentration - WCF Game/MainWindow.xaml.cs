@@ -234,9 +234,9 @@ namespace ConcentrationClient
         }
 
         public void CardFlipped(string btnXaml) {
-            if (Thread.CurrentThread == Dispatcher.Thread) {
+            if (Thread.CurrentThread == Dispatcher.Thread)
+            {
                 FindButtonChangeVisibility(GetButtonFromXaml(btnXaml), true);
-
                 if (game.CardsFlipped == 2)
                 {
                     pbText.Text = "Remember the cards...";

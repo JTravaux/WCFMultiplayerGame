@@ -9,6 +9,7 @@ namespace ConcentrationLibrary
     [ServiceContract(CallbackContract = typeof(ICallback))]
     public interface IConcentration {
         [OperationContract(IsOneWay = true)] void PointScored();
+        [OperationContract(IsOneWay = true)] void NotifyCardFlip();
         [OperationContract] bool StartGame();
         [OperationContract] bool PauseGame();
         [OperationContract] int AddPlayer();
@@ -36,8 +37,8 @@ namespace ConcentrationLibrary
         public string FirstBtnXaml { get; set; }
         public string SecondBtnXaml { get; set; }
         public string GameGridXaml { get; set; }
-        public int CardsFlipped { get; set; }
         public int NumPlayers { get; set; }
+        public int CardsFlipped { get; set; }
         public Card FirstCard { get; set; }
         public Card SecondCard { get; set; }
         public Deck GameDeck { get; set; }
@@ -49,7 +50,7 @@ namespace ConcentrationLibrary
                     callback.NextPlayer();
             }
         }
-
+      
         public Concentration() {
             Players = new List<Player>();
             callbacks = new HashSet<ICallback>();
@@ -139,6 +140,14 @@ namespace ConcentrationLibrary
             foreach (ICallback callback in callbacks)
                 callback.GamePaused();
             return true;
+        }
+
+        public void NotifyCardFlip() {
+            foreach (ICallback callback in callbacks)
+                if (CardsFlipped == 1)
+                    callback.CardFlipped(FirstBtnXaml);
+                else
+                    callback.CardFlipped(SecondBtnXaml);
         }
     }
 }

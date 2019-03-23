@@ -151,31 +151,31 @@ namespace ConcentrationClient
             {
                 game.FirstBtnXaml = XamlWriter.Save(sender as Button);
                 game.FirstCard = GetButtonFromXaml(game.FirstBtnXaml).Tag as Card;
-                FindButtonChangeVisibility(GetButtonFromXaml(game.FirstBtnXaml), true);
+                game.NotifyCardFlip();
             }
             else if (game.CardsFlipped == 2)
             {
                 game.SecondBtnXaml = XamlWriter.Save(sender as Button);
                 game.SecondCard = GetButtonFromXaml(game.SecondBtnXaml).Tag as Card;
-                FindButtonChangeVisibility(GetButtonFromXaml(game.SecondBtnXaml), true);
+                game.NotifyCardFlip();
 
                 // See if a match...
                 if ((game.FirstCard.Color == game.SecondCard.Color) && (game.FirstCard.Rank == game.SecondCard.Rank)) {
                     game.PointScored();
-                    UpdatePlayers();
                     game.CardsFlipped = 0;
 
+                    UpdatePlayers();
+                    lbPlayers.SelectedIndex = CurrentPlayer - 1;
                     pbText.Text = "Point Awarded!";
                     pbRememberCardsTimer.Foreground = Brushes.LimeGreen;
                     pbRememberCardsTimer.Value = 100;
-
-                    lbPlayers.SelectedIndex = CurrentPlayer - 1;
                 }
                 else
                 {
-                    pbText.Text = "Remember the cards...";
-                    pbRememberCardsTimer.Foreground = Brushes.IndianRed;
-                    worker.RunWorkerAsync();
+                    // Change player turn 
+                    game.CurrentPlayer++;
+                    CurrentPlayer = game.CurrentPlayer;
+                    lbPlayers.SelectedIndex = CurrentPlayer - 1;
                 }
             }
         }
@@ -218,18 +218,13 @@ namespace ConcentrationClient
             FindButtonChangeVisibility(GetButtonFromXaml(game.FirstBtnXaml));
             FindButtonChangeVisibility(GetButtonFromXaml(game.SecondBtnXaml));
             game.CardsFlipped = 0;
-
-            // Change player turn
-            game.CurrentPlayer++;
-            CurrentPlayer = game.CurrentPlayer;
-            lbPlayers.SelectedIndex = CurrentPlayer - 1;
         }
 
         /////////////////////
         // Callback Methods
         /////////////////////
         public delegate void CallbackDelegate();
-        public delegate void CardFlippedDelegate(string btnXaml, Card card);
+        public delegate void CardFlippedDelegate(string btnXaml);
 
         public void RescanPlayers() {
             if (Thread.CurrentThread == Dispatcher.Thread)
@@ -238,8 +233,28 @@ namespace ConcentrationClient
                 Dispatcher.BeginInvoke(new CallbackDelegate(RescanPlayers));
         }
 
-        public void CardFlipped(string btnXaml, Card card) {
-            throw new NotImplementedException();
+        public void CardFlipped(string btnXaml) {
+            if (Thread.CurrentThread == Dispatcher.Thread) {
+                FindButtonChangeVisibility(GetButtonFromXaml(btnXaml), true);
+
+                if (game.CardsFlipped == 2)
+                {
+                    pbText.Text = "Remember the cards...";
+                    pbRememberCardsTimer.Foreground = Brushes.IndianRed;
+
+                    // If a point is NOT scored...
+                    if (!((game.FirstCard.Color == game.SecondCard.Color) && (game.FirstCard.Rank == game.SecondCard.Rank)))
+                        worker.RunWorkerAsync();
+                    else
+                    {
+                        pbText.Text = "Point Awarded to Player " + game.CurrentPlayer + "...";
+                        pbRememberCardsTimer.Foreground = Brushes.LimeGreen;
+                        pbRememberCardsTimer.Value = 100;
+                    }
+                }
+            }
+            else
+                Dispatcher.BeginInvoke(new CardFlippedDelegate(CardFlipped), btnXaml);
         }
 
         public void GameStarted() {

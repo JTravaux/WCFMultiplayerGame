@@ -9,7 +9,10 @@ namespace ConcentrationLibrary
     [ServiceContract(CallbackContract = typeof(ICallback))]
     public interface IConcentration {
         [OperationContract(IsOneWay = true)] void PointScored();
+        [OperationContract] bool StartGame();
+        [OperationContract] bool PauseGame();
         [OperationContract] int AddPlayer();
+        [OperationContract] bool ToggleCallbacks();
 
         List<Player> Players { [OperationContract]get; [OperationContract]set; }
         int CurrentPlayer { [OperationContract]get; [OperationContract]set; }
@@ -40,7 +43,11 @@ namespace ConcentrationLibrary
         public Deck GameDeck { get; set; }
         public int CurrentPlayer {
             get => currentPlayer;
-            set => currentPlayer = currentPlayer >= Players.Count ? 1 : value;
+            set {
+                currentPlayer = currentPlayer >= Players.Count ? 1 : value;
+                foreach (ICallback callback in callbacks)
+                    callback.NextPlayer();
+            }
         }
 
         public Concentration() {
@@ -90,22 +97,48 @@ namespace ConcentrationLibrary
                 if (p.PlayerID == currentPlayer)
                     p.Points++;
 
-            //foreach (ICallback callback in callbacks)
-            //    callback.PointScored();
+            foreach (ICallback callback in callbacks)
+                callback.RescanPlayers();
         }
 
         // Add a player to the game
-        // Current max = 6 players
         public int AddPlayer() {
             if(NumPlayers + 1 >= 7)
                 return 0;
             else
                 Players.Add(new Player(++NumPlayers));
 
-            // Subscribe to callbacks
-            callbacks.Add(OperationContext.Current.GetCallbackChannel<ICallback>());
+            foreach (ICallback callback in callbacks)
+                callback.RescanPlayers();
 
             return NumPlayers;
+        }
+
+        // Toggle callbacks for the clients
+        public bool ToggleCallbacks() {
+            ICallback cb = OperationContext.Current.GetCallbackChannel<ICallback>();
+            if (callbacks.Contains(cb)) {
+                callbacks.Remove(cb);
+                return false;
+            } else {
+                callbacks.Add(cb);
+                return true;
+            }
+        }
+
+        // Send a notification to all clients that the game has started
+        public bool StartGame() {
+            foreach (ICallback callback in callbacks)
+                callback.GameStarted();
+            return true;
+        }
+
+        // Send a notification to all clients that the game has been paused
+        // because in this multiplayer game, you can pause!
+        public bool PauseGame() {
+            foreach (ICallback callback in callbacks)
+                callback.GamePaused();
+            return true;
         }
     }
 }

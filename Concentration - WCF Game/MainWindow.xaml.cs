@@ -23,6 +23,9 @@ namespace ConcentrationClient
         Stopwatch stopwatch;
         Grid gameGrid;
         ObservableCollection<Player> players;
+        bool callbacksEnabled;
+        bool gameStarted;
+        bool gamePaused;
 
         public static readonly DependencyProperty CurrentPlayerProperty = DependencyProperty.Register("CurrentPlayer", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
         public int CurrentPlayer {
@@ -51,7 +54,10 @@ namespace ConcentrationClient
             // Assign the player number
             PlayerID = game.AddPlayer();
 
-            if(PlayerID == 0) {
+            // Subscribe to callbacks
+            callbacksEnabled = game.ToggleCallbacks();
+
+            if (PlayerID == 0) {
                 MessageBox.Show("Players 6/6. Game is full, please try again later.", "Game is Full", MessageBoxButton.OK, MessageBoxImage.Error);
                 channel.Close();
                 Close();
@@ -93,6 +99,12 @@ namespace ConcentrationClient
         // GUI Events/Helpers
         //////////////////////
         private void StartGame(object sender, RoutedEventArgs e) {
+
+            if (!gameStarted) {
+                gameStarted = game.StartGame();
+                gamePaused = false;
+            }
+
             btnStart.IsEnabled = false;
             gameGrid.IsEnabled = true;
             btnPause.IsEnabled = true;
@@ -110,6 +122,12 @@ namespace ConcentrationClient
         }
 
         private void PauseGame(object sender, RoutedEventArgs e) {
+
+            if (!gamePaused){
+                gamePaused = game.PauseGame();
+                gameStarted = false;
+            }
+
             btnPause.IsEnabled = false;
             gameGrid.IsEnabled = false;
             btnStart.IsEnabled = true;
@@ -208,28 +226,31 @@ namespace ConcentrationClient
         /////////////////////
         // Callback Methods
         /////////////////////
-        public void PointScored() {
-            UpdatePlayers();
+        public delegate void CallbackDelegate();
+        public void RescanPlayers() {
+            if (Thread.CurrentThread == Dispatcher.Thread)
+                UpdatePlayers();
+            else
+                Dispatcher.BeginInvoke(new CallbackDelegate(RescanPlayers));
         }
 
-        public void CardFlipped(string btnXaml, Card card)
-        {
+        public void CardFlipped(string btnXaml, Card card) {
             throw new NotImplementedException();
         }
 
-        public void PlayerJoinedGame()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GameStarted()
-        {
-            throw new NotImplementedException();
+        public void GameStarted() {
+            if (Thread.CurrentThread == Dispatcher.Thread)
+                StartGame(null, null);
+            else
+                Dispatcher.BeginInvoke(new CallbackDelegate(GameStarted));
         }
 
         public void GamePaused()
         {
-            throw new NotImplementedException();
+            if (Thread.CurrentThread == Dispatcher.Thread)
+                PauseGame(null, null);
+            else
+                Dispatcher.BeginInvoke(new CallbackDelegate(GamePaused));
         }
 
         public void GameFinished()
@@ -237,11 +258,18 @@ namespace ConcentrationClient
             throw new NotImplementedException();
         }
 
-        public void NextPlayer()
-        {
-            // If the game's current player is = to this client's playerID, do nothing
-
-            // Else, make the grid unplayable since it's not your turn
+        public void NextPlayer() {
+            if (Thread.CurrentThread == Dispatcher.Thread)
+            {
+                if (game.CurrentPlayer == PlayerID)
+                    foreach (UIElement b in gameGrid.Children)
+                        b.IsEnabled = true;
+                else
+                    foreach (UIElement b in gameGrid.Children)
+                        b.IsEnabled = false;
+            }
+            else
+                Dispatcher.BeginInvoke(new CallbackDelegate(NextPlayer));
         }
     }
 }

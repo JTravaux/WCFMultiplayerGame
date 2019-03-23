@@ -189,12 +189,14 @@ namespace ConcentrationClient
             }
         }
 
+        // Refresh the players in the listbox
         private void UpdatePlayers(){
             players.Clear();
             foreach (Player p in game.Players)
                 players.Add(p);
         }
 
+        // Find the button on the grid, and change it's visibility
         private void FindButtonChangeVisibility(Button btn, bool hidden = false) {
             foreach (UIElement b in gameGrid.Children)
                 if (b.GetType() == typeof(Button))
@@ -206,6 +208,7 @@ namespace ConcentrationClient
                                 b.Visibility = Visibility.Visible;
         }
 
+        // Create a button object from XAML
         private Button GetButtonFromXaml(string xaml) => XamlReader.Parse(xaml) as Button;
 
         /*---------------

@@ -105,6 +105,8 @@ namespace ConcentrationClient
                 gamePaused = false;
             }
 
+            NextPlayer();
+
             btnStart.IsEnabled = false;
             gameGrid.IsEnabled = true;
             btnPause.IsEnabled = true;
@@ -227,7 +229,7 @@ namespace ConcentrationClient
         // Callback Methods
         /////////////////////
         public delegate void CallbackDelegate();
-        public delegate void CallbackDelegateParams(string btnXaml, Card card);
+        public delegate void CardFlippedDelegate(string btnXaml, Card card);
 
         public void RescanPlayers() {
             if (Thread.CurrentThread == Dispatcher.Thread)
@@ -267,6 +269,9 @@ namespace ConcentrationClient
                 else
                     foreach (UIElement b in gameGrid.Children)
                         b.IsEnabled = false;
+
+                CurrentPlayer = game.CurrentPlayer;
+                lbPlayers.SelectedIndex = CurrentPlayer - 1;
             }
             else
                 Dispatcher.BeginInvoke(new CallbackDelegate(NextPlayer));

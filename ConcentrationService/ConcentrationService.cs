@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 18, 2019
+// Purpose: Self-hosted service for the Concentration game
+
+using System;
 using System.ServiceModel;
 using ConcentrationLibrary;
 

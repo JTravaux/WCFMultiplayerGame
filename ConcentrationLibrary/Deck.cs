@@ -1,15 +1,17 @@
-﻿using System;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 20, 2019
+// Purpose: Definition of a deck of cards to be used for the game
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace ConcentrationLibrary
 {
-    [DataContract]
     public class Deck
     {
-        [DataMember] private List<Card> cards;   // The deck of cards
-        [DataMember] private int index;         // The next index to draw a card from
+        private List<Card> cards;   // The deck of cards
+        private int index;         // The next index to draw a card from
 
         // Constructor
         public Deck()

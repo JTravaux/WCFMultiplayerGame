@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 18, 2019
+// Purpose: Data contract to be used by the Concentration service
+
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.ServiceModel;

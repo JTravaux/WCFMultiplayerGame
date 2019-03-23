@@ -1,4 +1,8 @@
-﻿using System.Runtime.Serialization;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 18, 2019
+// Purpose: Data contract to be used by the Concentration service
+
+using System.Runtime.Serialization;
 
 namespace ConcentrationLibrary
 {

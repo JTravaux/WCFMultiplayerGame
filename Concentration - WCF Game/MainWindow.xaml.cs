@@ -1,4 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 20, 2019
+// Purpose: GUI for the concentration game, which uses the ServiceContract
+//          and implements the callback interface
+
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
@@ -17,15 +22,17 @@ namespace ConcentrationClient
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false)]
     public partial class MainWindow : Window, ICallback
     {
-        IConcentration game;
         BackgroundWorker worker;
         DispatcherTimer timer;
-        Stopwatch stopwatch;
         Grid gameGrid;
+        IConcentration game;
         ObservableCollection<Player> players;
+        Stopwatch stopwatch;
+
         bool callbacksEnabled;
         bool gameStarted;
         bool gamePaused;
+        int playerID;
 
         public static readonly DependencyProperty CurrentPlayerProperty = DependencyProperty.Register("CurrentPlayer", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
         public int CurrentPlayer {
@@ -39,12 +46,6 @@ namespace ConcentrationClient
             set => SetValue(CurrentTimeProperty, value);
         }
 
-        public static readonly DependencyProperty PlayerIDProperty = DependencyProperty.Register("PlayerID", typeof(int), typeof(MainWindow), new PropertyMetadata(0));
-        public int PlayerID {
-            get { return (int)GetValue(PlayerIDProperty); }
-            set { SetValue(PlayerIDProperty, value); }
-        }
-
         public MainWindow() {
             InitializeComponent();
 
@@ -52,26 +53,30 @@ namespace ConcentrationClient
             game = channel.CreateChannel();
 
             // Assign the player number
-            PlayerID = game.AddPlayer();
+            playerID = game.AddPlayer();
 
-            // Subscribe to callbacks
-            callbacksEnabled = game.ToggleCallbacks();
-
-            if (PlayerID == 0) {
+            // See if the game is full (6/6)
+            if (playerID == 0) {
                 MessageBox.Show("Players 6/6. Game is full, please try again later.", "Game is Full", MessageBoxButton.OK, MessageBoxImage.Error);
                 channel.Close();
                 Close();
             }
 
+            // Subscribe to callbacks
+            callbacksEnabled = game.ToggleCallbacks();
+
+            // Get and set the game board & set player ID
             gameGrid = XamlReader.Parse(game.GameGridXaml) as Grid;
-            
-            // Add the listeners to the buttons and images for the cards
+            lblPlayerID.Content = playerID;
+
+            // Add the listeners to the buttons, and images for the cards
             foreach (UIElement b in gameGrid.Children)
                 if(b.GetType() == typeof(Button))
                     (b as Button).Click += FlipCard;
                 else if (b.GetType() == typeof(Image))
                     (b as Image).Source = new BitmapImage(new Uri("Images/" + ((b as Image).Tag as Card).GetRankString() + ((b as Image).Tag as Card).Suit.ToString() + ".png", UriKind.Relative));
 
+            // Add all the game board to the window
             mainGrid.Children.Add(gameGrid);
 
             // Add a background worker for the progress bar
@@ -88,10 +93,12 @@ namespace ConcentrationClient
             timer.Tick += Timer_Tick;
             timer.Start();
             
+            // Store the players of the game
             players = new ObservableCollection<Player>();
             lbPlayers.ItemsSource = players;
             UpdatePlayers();
 
+            // Set the datacontext for binding to DP's
             DataContext = this;
         }
 
@@ -105,22 +112,24 @@ namespace ConcentrationClient
                 gamePaused = false;
             }
 
+            // Detirmine who's turn it is
             NextPlayer();
 
             btnStart.IsEnabled = false;
             gameGrid.IsEnabled = true;
             btnPause.IsEnabled = true;
 
-            timer.Start();
-            stopwatch.Start();
-
             // Update the players
             UpdatePlayers();
             lbPlayers.SelectedIndex = CurrentPlayer - 1;
 
-            // Reset the progress bar
+            // (Re)set the progress bar
             pbText.Text = "";
             pbRememberCardsTimer.Value = 0;
+
+            // Start the timers
+            timer.Start();
+            stopwatch.Start();
         }
 
         private void PauseGame(object sender, RoutedEventArgs e) {
@@ -277,7 +286,7 @@ namespace ConcentrationClient
         public void NextPlayer() {
             if (Thread.CurrentThread == Dispatcher.Thread)
             {
-                if (game.CurrentPlayer == PlayerID)
+                if (game.CurrentPlayer == playerID)
                     foreach (UIElement b in gameGrid.Children)
                         b.IsEnabled = true;
                 else

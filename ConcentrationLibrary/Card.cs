@@ -1,4 +1,7 @@
-﻿
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 18, 2019
+// Purpose: Definition of the ConcentrationLibrary service and it's implementation
+
 using System.Runtime.Serialization;
 
 namespace ConcentrationLibrary

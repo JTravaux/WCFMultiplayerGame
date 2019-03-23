@@ -1,4 +1,9 @@
-﻿using System.ServiceModel;
+﻿// Names:   Jordan Travaux & Abel Emun
+// Date:    March 20, 2019
+// Purpose: Definition of the ICallback interface to be implemented by the client
+
+using System.ServiceModel;
+
 namespace ConcentrationLibrary
 {
     public interface ICallback {

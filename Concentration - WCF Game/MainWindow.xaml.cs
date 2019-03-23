@@ -227,6 +227,8 @@ namespace ConcentrationClient
         // Callback Methods
         /////////////////////
         public delegate void CallbackDelegate();
+        public delegate void CallbackDelegateParams(string btnXaml, Card card);
+
         public void RescanPlayers() {
             if (Thread.CurrentThread == Dispatcher.Thread)
                 UpdatePlayers();
@@ -245,16 +247,14 @@ namespace ConcentrationClient
                 Dispatcher.BeginInvoke(new CallbackDelegate(GameStarted));
         }
 
-        public void GamePaused()
-        {
+        public void GamePaused() {
             if (Thread.CurrentThread == Dispatcher.Thread)
                 PauseGame(null, null);
             else
                 Dispatcher.BeginInvoke(new CallbackDelegate(GamePaused));
         }
 
-        public void GameFinished()
-        {
+        public void GameFinished() {
             throw new NotImplementedException();
         }
 

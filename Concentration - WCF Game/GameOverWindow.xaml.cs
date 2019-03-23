@@ -20,10 +20,8 @@ namespace ConcentrationClient
             {
                 tbWinner.Visibility = Visibility.Hidden;
                 tbLoser.Visibility = Visibility.Visible;
-
                 imgWinner.Visibility = Visibility.Hidden;
                 imgLoser.Visibility = Visibility.Visible;
-
                 tbWinnerStats.Text = string.Format("Player {0} won with {1}/26 points!", winner.PlayerID, winner.Points);
                 tbGameTime.Text = string.Format("Elapsed game time: {0:mm\\:ss\\:ff}", gameTime);
             }

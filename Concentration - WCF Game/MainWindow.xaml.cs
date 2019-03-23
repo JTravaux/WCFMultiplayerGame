@@ -245,10 +245,9 @@ namespace ConcentrationClient
                     // If a point is NOT scored...
                     if (!((game.FirstCard.Color == game.SecondCard.Color) && (game.FirstCard.Rank == game.SecondCard.Rank)))
                         worker.RunWorkerAsync();
-                    else
-                    {
+                    else {
                         pbText.Text = "Point Awarded to Player " + game.CurrentPlayer + "...";
-                        pbRememberCardsTimer.Foreground = Brushes.LimeGreen;
+                        pbRememberCardsTimer.Foreground = Brushes.OrangeRed;
                         pbRememberCardsTimer.Value = 100;
                     }
                 }

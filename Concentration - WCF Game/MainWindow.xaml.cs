@@ -237,6 +237,7 @@ namespace ConcentrationClient
         /////////////////////
         public delegate void CallbackDelegate();
         public delegate void CardFlippedDelegate(string btnXaml);
+        public delegate void GameOverDelegate(Player winner);
 
         public void RescanPlayers() {
             if (Thread.CurrentThread == Dispatcher.Thread)
@@ -282,8 +283,26 @@ namespace ConcentrationClient
                 Dispatcher.BeginInvoke(new CallbackDelegate(GamePaused));
         }
 
-        public void GameFinished() {
-            throw new NotImplementedException();
+        public void GameFinished(Player winner) {
+            if (Thread.CurrentThread == Dispatcher.Thread)
+            {
+                btnPause.IsEnabled = false;
+                gameGrid.IsEnabled = false;
+                btnStart.IsEnabled = false;
+
+                // Reset the progress bar
+                pbText.Text = "Game Over";
+                pbRememberCardsTimer.Foreground = Brushes.Plum;
+                pbRememberCardsTimer.Value = 100;
+
+                // Stop the timers
+                timer.Stop();
+                stopwatch.Stop();
+
+                new GameOverWindow(winner, playerID, stopwatch.Elapsed).ShowDialog();
+            }
+            else
+                Dispatcher.BeginInvoke(new GameOverDelegate(GameFinished), winner);
         }
 
         public void NextPlayer() {

@@ -1,0 +1,31 @@
+﻿<Window x:Class="ConcentrationClient.GameOverWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConcentrationClient"
+        mc:Ignorable="d"
+        Title="Game Over!" Height="300" Width="300" ResizeMode="NoResize" Closed="Window_Closed">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Winner and Loser text -->
+        <TextBlock x:Name="tbWinner" Text="You Won!" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" FontFamily="Arial Black" Foreground="LawnGreen"/>
+        <TextBlock x:Name="tbLoser" Text="You Lost :(" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" FontFamily="Arial Black" Foreground="OrangeRed" Visibility="Hidden"/>
+
+        <!-- Winner and Loser images -->
+        <Image x:Name="imgWinner" Source="./Images/winner.gif" Grid.Row="1" Margin="5"/>
+        <Image x:Name="imgLoser" Source="./Images/loser.gif" Grid.Row="1" Visibility="Hidden"/>
+
+        <!-- Game Stats -->
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock x:Name="tbWinnerStats" Text="Player x won with x/26 points" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="tbGameTime" Text="The total game time was: x" HorizontalAlignment="Center"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.ServiceModel;
 using System.Windows.Markup;
+using System.Linq;
 
 namespace ConcentrationLibrary
 {
@@ -105,6 +106,22 @@ namespace ConcentrationLibrary
 
             foreach (ICallback callback in callbacks)
                 callback.RescanPlayers();
+
+            // Check for a winner
+            int totalPoints = 0;
+            foreach (Player p in Players)
+                totalPoints += p.Points;
+
+            // Game is over, max points have been scored
+            if (totalPoints == 26)
+            {
+                // Detirmine who won
+                int mostPoints = Players.Max(p => p.Points);
+                Player winner = Players.First(p => p.Points == mostPoints);
+
+                foreach (ICallback callback in callbacks)
+                    callback.GameFinished(winner);
+            }
         }
 
         // Add a player to the game

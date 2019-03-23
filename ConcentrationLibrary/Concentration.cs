@@ -1,6 +1,6 @@
 ﻿// Names:   Jordan Travaux & Abel Emun
 // Date:    March 18, 2019
-// Purpose: Data contract to be used by the Concentration service
+// Purpose: Service contract and implementation for the game
 
 using System.Collections.Generic;
 using System.Windows;

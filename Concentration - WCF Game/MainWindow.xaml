@@ -9,7 +9,7 @@ MainWindow XAML for the Concentration game
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ConcentrationClient"
         mc:Ignorable="d"
-        Title="Concentration - The Game" Height="500" Width="1300">
+        Title="Concentration - The Game" Height="500" Width="1300" Closing="UnSubscribeFromCallbacks">
 
     <Window.Resources>
         <ResourceDictionary Source="Styles.xaml"/>

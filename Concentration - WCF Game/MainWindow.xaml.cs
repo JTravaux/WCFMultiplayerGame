@@ -321,5 +321,10 @@ namespace ConcentrationClient
             else
                 Dispatcher.BeginInvoke(new CallbackDelegate(NextPlayer));
         }
+
+        private void UnSubscribeFromCallbacks(object sender, CancelEventArgs e) {
+            if( game != null && callbacksEnabled)
+                callbacksEnabled = game.ToggleCallbacks();
+        }
     }
 }

@@ -49,7 +49,7 @@ namespace ConcentrationClient
             InitializeComponent();
 
             // Connect to the service
-            DuplexChannelFactory<IConcentration> channel = new DuplexChannelFactory<IConcentration>(this, "ConcentrationService");
+            DuplexChannelFactory<IConcentration> channel = new DuplexChannelFactory<IConcentration>(this, "ConcentrationEndpoint");
             game = channel.CreateChannel();
 
             // Assign the player number
